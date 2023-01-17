@@ -1,7 +1,7 @@
 # Java 17
 A short introduction into the new features introduced into Java with version 17.
-The assumption is that you're currently working with Java 11,
-many of these functions were actually introduced in versions between 11 and 17.
+The assumption is that you're currently working with Java 11.
+Most of these features were actually introduced in versions between 11 and 17.
 
 ## reveal-js
 This presentation is made in [reveal.js](https://revealjs.com/). 
