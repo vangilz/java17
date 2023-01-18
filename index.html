@@ -212,7 +212,7 @@
 					};
 					```
 					* an *expression*, not a *statement*
-					* no the error-prone fall-through (`break`)
+					* no error-prone fall-through (`break`)
 					* pattern matching
 
 					---
@@ -251,11 +251,11 @@
 
 					For example, instead of
 					```java
-					stream.collect(Collectors.toList())
+					var list = stream.collect(Collectors.toList())
 					```
 					simply do
 					```java
-					stream.toList();
+					var list = stream.toList();
 					```
 
 					Beware: `toList()` returns an immutable List
@@ -269,8 +269,8 @@
 
 					## Cons
 					* Requires new skills, also for future maintainers
-					* Infra might not be up to date (IDE, SonarQube, agents)
-					* Exisiting projects: not enough benefit
+					* Infra might not be up to date (IDE, SonarQube, build agents, live environments)
+					* Existing projects: not enough benefit to migrate
 					* Libraries that do not work on a Java 17 JVM
 					* It might be scary to do things differently
 
@@ -299,7 +299,40 @@
 
 					--
 
-					ABN-AMRO and Microsoft support it completely
+					* Use `master-pom` 4.1.0 as parent pom for your project
+					```xml
+					<parent>
+						<groupId>com.abnamro.coesd</groupId>
+						<artifactId>master-pom</artifactId>
+						<version>4.1.0</version>
+					</parent>
+					```
+					* Set java source & target to `17` (as 11 is still default)
+					  ```xml
+					  <java.source>17</java.source>
+					  <java.target>17</java.target>		
+					  ```
+
+					--
+
+					* Set version to `1.17` in Pita's `java-maven` template
+					```yml
+					resources:
+						repositories:
+							- repository: templates
+							type: git
+							name: GRD0001045/pita-pipeline-templates
+					stages:
+						- stage: CI
+							jobs:
+							- template: flows/java-maven.yml@templates
+								parameters:
+								java_version: '1.17'
+					```
+
+					--
+
+					ABN AMRO and Azure support it completely
 					
 					It makes sense to use it for new projects on Azure
 
