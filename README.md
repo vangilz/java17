@@ -4,9 +4,11 @@ The assumption is that you're currently working with Java 11.
 Most of these features were actually introduced in versions between 11 and 17.
 
 ## reveal-js
-This presentation is made in [reveal.js](https://revealjs.com/). 
+This presentation is made in [reveal.js](https://revealjs.com/). You can download the `zip` frm there and unpack it to a directory called `reveal.js`
 
-`index.html` references a *reveal.js* installation next to current directory.
+`index.html` references a *reveal.js* installation two levels up from the current directory.
+So if this file is stored in directory `\user\code\java17`, a reveal.js installation is expected in a directory called `user\reveal.js`.
+This can be changed by manually altering the references to reveal.js in `index.html`
 
 Open [index.html](index.html) in any browser to start.
 
