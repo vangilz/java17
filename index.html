@@ -6,12 +6,12 @@
 
 		<title>Java 17</title>
 
-		<link rel="stylesheet" href="../../reveal.js/dist/reset.css">
-		<link rel="stylesheet" href="../../reveal.js/dist/reveal.css">
-		<link rel="stylesheet" href="../../reveal.js/dist/theme/black.css" id="theme">
+		<link rel="stylesheet" href="../reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="../reveal.js/dist/theme/black.css" id="theme">
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="../../reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
+		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
 	</head>
 	<body>
 		<div class="reveal">
@@ -24,8 +24,23 @@
 					## New features in Java 17
 
 					--
+
+					## Wie zijn wij?
+
+					Robbin Troost
+
+					Java Developer
+
+					Aegon Hypotheken
+
+					Notes:
+					* IT-for-IT bij Aegon Hypotheken
+					* 26 jaar woonachtig in Leersum
+					* Java Masterclass.
+
+					--
 					
-					## Who am I
+					## Wie zijn wij?
 
 					Joost van Gils
 					
@@ -40,20 +55,21 @@
 					* Hobbies: tech, music (midi), home automation		
 					
 					---
-					
-					## A little history
+
+					## Stukje geschiedenis
 					
 					--
 
-					## Java almost 27 years old
+					## Java is bijna 27 jaar oud
 
-					| version      | release date    | support ends    |
+					| versie       | release date    | support eindigt |
 					| ------------ |:---------------:| ---------------:|
 					| 1.0     	   | 23-01-1996      | ?               |
 					| SE 5	       | 29-09-2009      | April 2015      |
 					| SE 8 (LTS)   | 18-03-2014      | December 2030   |
 					| SE 11 (LTS)  | 25-09-2018      | September 2026  |
-					| SE 17 (LTS)  | 14-09-2021      | September 2029  |
+					| *SE 17 (LTS)  | 14-09-2021     | September 2029  |
+					| SE 21 (LTS)  | 19-09-2023      | September 2031  |
 
 					Notes:
 					Oracle. Azul, Red Hat, etc dates differ
@@ -65,20 +81,25 @@
 					| --- |:----------------------------------------:|
 					| 5	  | generics, annotations, enums, autoboxing, vararg, static imports |
 					| 8   | lambdas, stream API, java.nio (7), default methods    |
-					| 11  | var keyword (10), http client, EE removed  |
-					| 17  | wait for it...   |
+					| 11  | var keyword (10), http client, lambda local var syntax  |
 
-					Notes:
-					* The unmentioned versions mainly introduced improvements to APIs
-					* Actually: 17, 16, 15, 14, 13, 12
-					
 					---
 
-					## Records
-					(Java 16)
+					## Wat gaan we bekijken?
 
-					Notes:
-					* Introduced in Java 16
+					* Records
+					* Pattern matching
+					* Text blocks
+					* Helpful NPEs
+					* Switch expressions
+					* Sealed classes
+					* Improved Stream API
+					* Vector API (incubator)
+					* Foreign Function and Memory Access API (incubator)
+
+					--
+
+					## Records
 
 					--
 
@@ -89,18 +110,29 @@
 					```
 
 					--
-					
-					* Similar to Lombok's `@Value`
-					
+
+					* Gelijkwaardig aan Lombok's @Value
+
 					* Implicit	
-						* all-args contructor
-						* getters for all fields
-						* `equals` and `hashcode` methods
+						* all-args constructor
+						* getters voor alle velden
+						* `equals` en `hashcode` method
 						* `toString` method
-					* Very efficient on JVM
+
+					* Geen extends mogelijk. Hiervoor is Lombok weer handig.
+
+					* Efficient op de JVM
+
+					Notes:
+					* Lombok wordt ook veel gebruikt voor het builder pattern.
+					De technieken zijn niet exclusief, maar vullen elkaar aan.
 
 					--
-
+					```java
+					public record Point(long x, long y) {
+						// nothing to see here
+					}
+					```
 					```java
 					var p = new Point(10, 20);
 					var q = new Point(10, 20);
@@ -118,8 +150,11 @@
 
 					---
 
-					## Pattern matching for instanceOf
-					(Java 16)
+					## Pattern matching (instanceOf)
+
+					Notes:
+					Pattern matching involves testing whether an object has a particular structure,
+						then extracting data from that object if there's a match.
 
 					--
 
@@ -137,10 +172,42 @@
 					}
 					```
 
+					--
+
+					### Pattern matching voor records (JDK 21)
+
+					--
+
+					Java 17
+
+					```java
+					record Point(int x, int y) {}
+					```
+
+					```java
+					static void printSum(Object o) {
+						if (o instanceof Point p) {
+							int x = p.x();
+							int y = p.y();
+							System.out.println(x+y);
+						}
+					}
+					```
+
+					Java 21
+					```java
+					record Point(int x, int y) {}
+
+					void printSum(Object o) {
+						if (o instanceof Point(int x, int y)) {
+							System.out.println(x+y);
+						}
+					}
+					```
+
 					---
 
 					## Text blocks
-					(Java 15)
 
 					--
 
@@ -167,7 +234,6 @@
 					---
 
 					## Helpful NullPointerExceptions
-					(Java 14)
 
 					--
 
@@ -177,7 +243,7 @@
 					```
 					```sh
 					Exception in thread "main" java.lang.NullPointerException
-						at com.abnamro/com.abnamro.App.main(App.java:17)
+						at com.abnamro/com.company.App.main(App.java:17)
 					```
 
 					--
@@ -188,15 +254,14 @@
 					```
 					```sh
 					Exception in thread "main" java.lang.NullPointerException:
-					Cannot invoke "com.abnamro.Address.street()" because the
-					return value of "com.abnamro.Customer.address()" is null
+					Cannot invoke "com.company.Address.street()" because the
+					return value of "com.company.Customer.address()" is null
 						at com.abnamro.Application.main(App.java:21)
 					```
 
 					---
 
 					## Switch expression
-					(Java 14)
 
 					--
 
@@ -208,13 +273,17 @@
 							if (year % 400 == 0) yield 29;
 							else if (year % 100 == 0) yield 28;
 							else if (year % 4 == 0) yield 29;
-							else yield 28; }
+							else yield 28;
+						}
 					};
 					```
-					* an *expression*, not a *statement*
-					* no error-prone fall-through (`break`)
+					* een *expression*, niet een *statement*
+					* voorkomt fall-through (`break`)
 					* pattern matching
+					* yield produceert een value voor een block (geen return!)
 
+					Notes:
+					Een expressie produceert altijd een resultaat, een statement niet (bijv. een void call)
 					---
 
 					## Sealed classes
@@ -236,34 +305,110 @@
 
 					--
 
-					Useful for
-					* `switch` without `default` case
-					*  compiler can check exhaustiveness of `if/then/else` statements
-					* Algebraic data types (with `records`)
+					Handig voor:
+					* `switch` zonder `default` case
+					* checken of alle `if/then/else` statements zijn doorlopen (compiler doet dit)
+
+					Notes:
+					* Open-closed principle?
+					* Design for extension, else prohibit it?
 
 					---
 
-
 					## Improved streams API
-					(Java 16)
 
 					--
 
-					For example, instead of
+					Voorheen:
 					```java
 					var list = stream.collect(Collectors.toList())
 					```
-					simply do
+
+					wordt:
+
 					```java
 					var list = stream.toList();
 					```
 
-					Beware: `toList()` returns an immutable List
+					Let op: `toList()` geeft een immutable List
 
-					
 					---
 
-					## Why (not) use Java 17
+					## Vector API (incubator)
+
+					--
+
+					* Vierde incubator, dus vrij complex (sinds 2018)
+					* Meerdere berekeningen in een enkele CPU-cycle (SIMD)
+					* Sneller dan equivalente scalar operations
+					* Platform-agnostisch
+					* Auto vectorisation
+
+					--
+
+					Voorheen:
+
+					```java
+					s[0] = s[0] + v[0];
+					s[1] = s[1] + v[1];
+					s[2] = s[2] + v[2];
+					s[3] = s[3] + v[3];
+					```
+
+					Java 16+
+					```java
+					float[] a = new float[] {1f, 2f, 3f, 4f}; // 4 x 32 bits
+					float[] b = new float[] {5f, 8f, 10f, 12f}; // 4 x 32 bits
+
+					FloatVector first = FloatVector.fromArray(FloatVector.SPECIES_128, a, 0); // 128 bits want 4x32, 0 offset
+					FloatVector second = FloatVector.fromArray(FloatVector.SPECIES_128, b, 0); // 128 bits want 4x32, 0 offset
+
+					FloatVector result = first
+							.add(second)
+							.pow(2)
+							.neg();
+					```
+
+					---
+
+					## Foreign Function and Memory Access API (incubator)
+
+					--
+
+					* Backbone voor o.a. de Vector API
+					* Momenteel alleen C-libraries
+					* Voorheen JNI, maar vrij beperkt
+					* Functie calls en memory buiten de JVM uitvoeren en aanspreken
+					* Efficient en veilig
+
+					Notes:
+					* Bij JNI moest het JVM/platform-specific gecompiled worden om met elkaar te laten werken
+
+					--
+
+					Off-memory gebruiken:
+
+					```java
+					// Allocate off-heap memory to store four pointers
+					String[] javaStrings = { "mouse", "cat", "dog", "car" };
+
+					MemorySegment offHeap = MemorySegment.allocateNative(
+						MemoryLayout.ofSequence(javaStrings.length,CLinker.C_POINTER));
+					```
+
+
+					Een externe C-functie aanroepen:
+					```java
+					MethodHandle radixSort = CLinker.getInstance().downcallHandle(
+						CLinker.systemLookup().lookup("radixsort"), ...);
+
+					radixSort.invoke(offHeap.address(), javaStrings.length,
+						MemoryAddress.NULL, '\0');
+					```
+
+					---
+
+					## Waarom (geen) Java 17 gebruiken
 
 					--
 
@@ -287,69 +432,131 @@
 
 					---
 
-					## Java 17 @ ABN AMRO
+					![Java logo](images/java_small.png)
+					##  Spring Boot 3
 
 					--
 
-					![Support](images/support.png)
-
-					([source: Hitchhiker's Guide](https://confluence.int.abnamro.com/display/GRIDAD/Standard+Programming+Languages))
+					Migratie bij Aegon Hypotheken
 
 					--
 
-					* Use `master-pom` 4.1.0 as parent pom for your project
-					```xml
-					<parent>
-						<groupId>com.abnamro.coesd</groupId>
-						<artifactId>master-pom</artifactId>
-						<version>4.1.0</version>
-					</parent>
+					* Algemene aanpak incl. Java 17
+					* WebMVC controller changes
+					* Bootstrap properties
+					* Spring.factories
+
+					--
+
+					Stack
+					* Maven
+					* SonarQube 8.9.10 Enterprisie
+					* Kubernetes op AWS
+					* Docker containers voor deployment en microservice
+					* Parent pom voor versiebeheer richting teams
+
+					--
+
+					Vragen
+					* Support SonarQube Java 17?
+					* Hoe ondersteunen we versie 11 en 17 tegelijk?
+					* Hoe zorgen we dat teams vooruitgaan naar versie 17?
+
+					--
+
+					* Build container: versie 11 en 17 ondersteunen via SDKman
+					* De parent pom bevat een <java.version> die zich vertaalt naar een compiler target.
+					* In pipeline: target bepalen via POM
+
+					```bash
+					COMPILER_TARGET=$(mvn help:evaluate
+						-Dexpression="maven.compiler.target" \
+						--batch-mode
+						-DforceStdout \
+						-q)
 					```
-					* Set java source & target to `17` (as 11 is still default)
-					  ```xml
-					  <java.source>17</java.source>
-					  <java.target>17</java.target>		
-					  ```
 
-					([source: Hitchhiker's Guide](https://confluence.int.abnamro.com/pages/viewpage.action?pageId=435333723))
+					```bash
+					JAVA_HOME="$SDKMAN_DIR/candidates/java/${COMPILER_TARGET}"
+					echo "Setting home to $JAVA_HOME"
+					echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+					```
+
+					---
+
+					WebMVC controller changes
 
 					--
 
-					* Set version to `1.17` in Pita's `java-maven` template
-					```yml
-					resources:
-						repositories:
-							- repository: templates
-							type: git
-							name: GRD0001045/pita-pipeline-templates
-					stages:
-						- stage: CI
-							jobs:
-							- template: flows/java-maven.yml@templates
-								parameters:
-								java_version: '1.17'
+					```java
+					@RestController
+					public class MyController {
+					  @GetMapping("/some/greeting")
+					  public String greeting() {
+						return "Hello";
+					  }
+					}
+					```
+
+					Terugzetten oude gedrag:
+					```java
+					@Configuration
+					public class WebConfiguration implements WebMvcConfigurer {
+						@Override
+						public void configurePathMatch(PathMatchConfigurer configurer) {
+						  configurer.setUseTrailingSlashMatch(true);
+						}
+					}
 					```
 
 					--
 
-					ABN AMRO and Azure support it completely
-					
-					It makes sense to use it for new projects on Azure
+					Spring.factories deprecation (2.4x)
+
+					--
+
+					* Voorheen:
+					```java
+					resources/META-INF/spring.factories
+					```
+
+					Configuratie:
+					```java
+					org.springframework.boot.autoconfigure.EnableAutoConfiguration=xxx
+					```
+
+					En de autoconfiguratie:
+					```java
+					@ComponentScan("com.aegon.commons.amqp")
+
+					@PropertySource('...')
+
+					public class { /* ....*/ }
+
+					```
+
+					* Vanaf spring 2.7:
+					```java
+					META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+					```
+
+					* Vanaf Spring 3.0: geen spring.factories support meer
 
 					---
 
 					## Thank you!
 					joost.van.gils@nl.abnamro.com
+					robbin.troost@aegon.nl
 
 					</textarea>
 				</section>
 			</div>
 		</div>
 
-		<script src="../../reveal.js/dist/reveal.js"></script>
-		<script src="../../reveal.js/plugin/notes/notes.js"></script>
-		<script src="../../reveal.js/plugin/markdown/markdown.js"></script>
-		<script src="../../reveal.js/plugin/highlight/highlight.js"></script>
+		<script src="../reveal.js/dist/reveal.js"></script>
+		<script src="../reveal.js/plugin/notes/notes.js"></script>
+		<script src="../reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
 		<script>
 			// More info about initialization & config:
 			// - https://revealjs.com/initialization/
