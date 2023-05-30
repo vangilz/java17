@@ -12,6 +12,12 @@
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
+
+		<style>
+			.small {
+				font-size: 0.25em;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
@@ -21,7 +27,10 @@
 					<textarea data-template>
 					<!-- ## Java 17 -->	
 					![Java logo](images/java_small.png)
-					## New features in Java 17
+					![Spring Boot logo](images/spring_boot.png)
+
+
+					## Java 17 en Spring Boot 3
 
 					--
 
@@ -33,14 +42,14 @@
 
 					Aegon Hypotheken
 
+					<span class="small">linkedin.com/in/robbin-troost-b912806b</span>
+
 					Notes:
 					* IT-for-IT bij Aegon Hypotheken
 					* 26 jaar woonachtig in Leersum
 					* Java Masterclass.
 
 					--
-					
-					## Wie zijn wij?
 
 					Joost van Gils
 					
@@ -56,7 +65,20 @@
 					
 					---
 
-					## Stukje geschiedenis
+					## Context
+
+					* Spring Boot 2.x EOL
+					* Upgraden vereist minimaal Java 17
+					* Nieuwe features in zowel Spring als Java
+					* Migratie-ervaring en takeaways
+
+					Notes:
+					Spring Boot 2.7 is EOL op 18 november 2023.
+					Commerciele support loopt nog tot 18 feb 2025.
+
+					--
+
+					## Java 17
 					
 					--
 
@@ -283,10 +305,10 @@
 
 					Notes:
 					Een expressie produceert altijd een resultaat, een statement niet (bijv. een void call)
+
 					---
 
 					## Sealed classes
-					(Java 17)
 
 					--
 					
@@ -356,11 +378,14 @@
 
 					Java 16+
 					```java
-					float[] a = new float[] {1f, 2f, 3f, 4f}; // 4 x 32 bits
-					float[] b = new float[] {5f, 8f, 10f, 12f}; // 4 x 32 bits
+					float[] a = new float[] {1f, 2f, 3f, 4f}; // 4x32 bits
+					float[] b = new float[] {5f, 8f, 10f, 12f}; // 4x32 bits
 
-					FloatVector first = FloatVector.fromArray(FloatVector.SPECIES_128, a, 0); // 128 bits want 4x32, 0 offset
-					FloatVector second = FloatVector.fromArray(FloatVector.SPECIES_128, b, 0); // 128 bits want 4x32, 0 offset
+					// allebei de vectors 128 bits want 4x32, 0 offset
+					FloatVector first = FloatVector.fromArray(
+						FloatVector.SPECIES_128, a, 0);
+					FloatVector second = FloatVector.fromArray(
+						FloatVector.SPECIES_128, b, 0);
 
 					FloatVector result = first
 							.add(second)
@@ -385,21 +410,24 @@
 
 					--
 
-					Off-memory gebruiken:
+					Extern memory gebruiken:
 
 					```java
 					// Allocate off-heap memory to store four pointers
 					String[] javaStrings = { "mouse", "cat", "dog", "car" };
 
 					MemorySegment offHeap = MemorySegment.allocateNative(
-						MemoryLayout.ofSequence(javaStrings.length,CLinker.C_POINTER));
+						MemoryLayout.ofSequence(javaStrings.length,
+							CLinker.C_POINTER));
 					```
 
 
 					Een externe C-functie aanroepen:
 					```java
-					MethodHandle radixSort = CLinker.getInstance().downcallHandle(
-						CLinker.systemLookup().lookup("radixsort"), ...);
+					MethodHandle radixSort = CLinker.getInstance()
+						.downcallHandle(
+							CLinker.systemLookup().lookup("radixsort"), ...
+						);
 
 					radixSort.invoke(offHeap.address(), javaStrings.length,
 						MemoryAddress.NULL, '\0');
@@ -412,31 +440,27 @@
 					--
 
 					## Cons
-					* Requires new skills, also for future maintainers
-					* Infra might not be up to date (IDE, SonarQube, build agents, live environments)
-					* Existing projects: not enough benefit to migrate
-					* Libraries that do not work on a Java 17 JVM
-					* It might be scary to do things differently
+					* Geen toegevoegde waarde om te upgraden
+					* Niet alle libraries zullen al werken op Java 17
+					* Infra die achterloopt (IDE, SonarQube, build agents, live environments)
+					* Gebruik van nieuwe features vereist ook up-to-date kennis
 
 					--
 
 					## Pros
-					* Many bug fixes and security improvements
-					* Premier support for Java 11 ends Sept 2023
+					* Spring Boot 3+ heeft het nodig
+					* Bug fixes, security improvements
+					* Je hoeft niet gelijk nieuwe features te gebruiken
 					* Instant performance boost
-  						Java 17 is about 8.5% faster than Java 11 on G1 GC and 6.5% on parallel GC ([source](https://www.optaplanner.org/blog/2021/09/15/HowMuchFasterIsJava17.html)).
-					* Spring Boot 3+ requires it
-					* No need to use new features immediately
-					* It's fun to use new things!
+  						Java 17 is ongeveer 8.5% sneller dan Java 11 op de G1 GC en 6.5% op de parallel GC ([source](https://www.optaplanner.org/blog/2021/09/15/HowMuchFasterIsJava17.html)).
 
 					---
 
-					![Java logo](images/java_small.png)
-					##  Spring Boot 3
+					Migratie-ervaringen bij de klant
 
 					--
 
-					Migratie bij Aegon Hypotheken
+					Aegon Hypotheken
 
 					--
 
@@ -502,26 +526,24 @@
 					@Configuration
 					public class WebConfiguration implements WebMvcConfigurer {
 						@Override
-						public void configurePathMatch(PathMatchConfigurer configurer) {
+						public void configurePathMatch(
+							PathMatchConfigurer configurer
+						) {
 						  configurer.setUseTrailingSlashMatch(true);
 						}
 					}
 					```
 
-					--
+					---
 
 					Spring.factories deprecation (2.4x)
 
 					--
 
-					* Voorheen:
+					Spring 2.x via spring.factories:
 					```java
 					resources/META-INF/spring.factories
-					```
-
-					Configuratie:
-					```java
-					org.springframework.boot.autoconfigure.EnableAutoConfiguration=xxx
+					 -> org.springframework.boot.autoconfigure.EnableAutoConfiguration=xxx
 					```
 
 					En de autoconfiguratie:
@@ -531,15 +553,52 @@
 					@PropertySource('...')
 
 					public class { /* ....*/ }
-
 					```
 
-					* Vanaf spring 2.7:
+					Vanaf Spring 2.7:
 					```java
-					META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+					resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
 					```
 
-					* Vanaf Spring 3.0: geen spring.factories support meer
+					Vanaf Spring 3.0: geen spring.factories support meer
+
+					---
+
+					Bootstrap.properties deprecation (2.4x)
+
+					--
+
+					* Spring Cloud gaat hand-in-hand met Spring versies (compatibility)
+					* Parent bootstrap context
+					* Verplaatsen naar application.properties
+					* Alternatieven:
+
+					Notes:
+					Laadt externe properties en decrypt properties in locale config files.
+
+					Wordt bij ons samen gebruikt met Spring Cloud Config Server.
+					Application name wordt in de bootstrap gezet om het zo vroeg mogelijk beschikbaar te hebben.
+
+					Weer aanzetten
+					```
+						spring.cloud.bootstrap.enabled=true
+					```
+
+					Starter
+					```java
+					<dependency>
+						<groupId>org.springframework.cloud</groupId>
+						<artifactId>spring-cloud-starter-bootstrap</artifactId>
+					</dependency>
+					```
+
+					---
+
+					Take-aways
+
+					--
+
+					// TBD aan het eind.
 
 					---
 
