@@ -326,14 +326,15 @@
 					```
 
 					--
-
-					Handig voor:
-					* `switch` zonder `default` case
-					* checken of alle `if/then/else` statements zijn doorlopen (compiler doet dit)
+					Reden:
+					* Een enum is exhaustive voor switch, maar wat als we type classes gaan checken?
+					* Zonder deze construct final of package-private, alles of niets.
+					* Meer vrijheid voor de ontwikkelaar: widely accessible, not widely extensible
 
 					Notes:
 					* Open-closed principle?
 					* Design for extension, else prohibit it?
+					* Laatste punt kun je denken aan een abstract class
 
 					---
 
