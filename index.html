@@ -82,7 +82,7 @@
 					
 					--
 
-					## Java is bijna 27 jaar oud
+					## Java is iets meer dan 27 jaar oud
 
 					| versie       | release date    | support eindigt |
 					| ------------ |:---------------:| ---------------:|
@@ -300,8 +300,9 @@
 					};
 					```
 					* een *expression*, niet een *statement*
+					* nieuwe syntax voor beide mogelijk (->)
 					* voorkomt fall-through (`break`)
-					* yield produceert een value voor een block (geen return!)
+					* nadruk op bestaande ergernissen wegnemen
 
 					Notes:
 					Een expressie produceert altijd een resultaat, een statement niet (bijv. een void call)
@@ -491,7 +492,7 @@
 					* De parent pom bevat een <java.version> die zich vertaalt naar een compiler target.
 					* In pipeline: target bepalen via POM
 
-					```bash
+					```sh
 					COMPILER_TARGET=$(mvn help:evaluate
 						-Dexpression="maven.compiler.target" \
 						--batch-mode
@@ -499,7 +500,7 @@
 						-q)
 					```
 
-					```bash
+					```sh
 					JAVA_HOME="$SDKMAN_DIR/candidates/java/${COMPILER_TARGET}"
 					echo "Setting home to $JAVA_HOME"
 					echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
@@ -577,12 +578,6 @@
 					* Verplaatsen naar application.properties
 					* Alternatieven:
 
-					Notes:
-					Laadt externe properties en decrypt properties in locale config files.
-
-					Wordt bij ons samen gebruikt met Spring Cloud Config Server.
-					Application name wordt in de bootstrap gezet om het zo vroeg mogelijk beschikbaar te hebben.
-
 					Weer aanzetten
 					```
 						spring.cloud.bootstrap.enabled=true
@@ -595,6 +590,13 @@
 						<artifactId>spring-cloud-starter-bootstrap</artifactId>
 					</dependency>
 					```
+
+					Notes:
+					Laadt externe properties en decrypt properties in locale config files.
+
+					Wordt bij ons samen gebruikt met Spring Cloud Config Server.
+					Application name wordt in de bootstrap gezet om het zo vroeg mogelijk beschikbaar te hebben.
+
 
 					---
 
