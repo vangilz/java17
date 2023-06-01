@@ -25,12 +25,9 @@
                 <!-- Slides are separated by newline + three dashes + newline, vertical slides identical but two dashes -->
                 <section data-markdown data-separator="^\n---\n$" data-separator-vertical="^\n--\n$">
 					<textarea data-template>
-					<!-- ## Java 17 -->	
-					![Java logo](images/java_small.png)
-					![Spring Boot logo](images/spring_boot.png)
-
-
 					## Java 17 en Spring Boot 3
+					<img src="images/java_small.png" width="40%"/>
+					<img src="images/spring_boot.png" width="40%"/>
 
 					--
 
@@ -55,15 +52,15 @@
 					
 					Java Developer
 					
-					Payments Gladiators
+					ABN AMRO - Internet banking (Payments)
 
 					Notes:
-					* 50 years old, father of 3 sons, Almere
-					* Java since 2001 (Java 1.3), also Scala + functional programming style
-					* At AA since November 2022
+					* 51 jaar
+					* Java sinds 2001 (Java 1.3), also Scala + functional programming style
+					* Bij AA sinds november 2022
 					* Hobbies: tech, music (midi), home automation		
 					
-					---
+					--
 
 					## Context
 
@@ -76,7 +73,7 @@
 					Spring Boot 2.7 is EOL op 18 november 2023.
 					Commerciele support loopt nog tot 18 feb 2025.
 
-					--
+					---
 
 					## Java 17
 					
@@ -325,7 +322,6 @@
 					}
 					```
 
-					--
 					Reden:
 					* Een enum is exhaustive voor switch, maar wat als we type classes gaan checken?
 					* Zonder deze construct final of package-private, alles of niets.
@@ -455,6 +451,175 @@
 					* Je hoeft niet gelijk nieuwe features te gebruiken
 					* Instant performance boost
   						Java 17 is ongeveer 8.5% sneller dan Java 11 op de G1 GC en 6.5% op de parallel GC ([source](https://www.optaplanner.org/blog/2021/09/15/HowMuchFasterIsJava17.html)).
+
+					---
+
+					## Spring Boot 3
+					
+					--
+
+					## Wat is nieuw?
+					([release notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes))
+
+					--
+
+					## Jakarta EE
+					versie 9 met support voor 10				
+					
+					Maar dus ook: Hibernate Validator 7+, Tomcat 10+, en Jetty 11+
+
+					--
+
+					## Spring Native
+
+					```sh
+					mvn spring-boot:aot-generate
+					```
+					SB3 vervangt Spring Native, geen extra plug-ins nodig
+
+					--
+
+					## Observability
+					[Auto-configuration voor Micrometer](https://docs.spring.io/spring-boot/docs/3.0.0/reference/html/actuator.html#actuator.observability)
+					```java
+						@Component
+						public class MyCustomObservation {
+							private final ObservationRegistry observationRegistry;
+							public MyCustomObservation(ObservationRegistry observationRegistry) {
+								this.observationRegistry = observationRegistry;
+							}
+							public void doSomething() {
+								Observation.createNotStarted("doSomething", this.observationRegistry)
+									.lowCardinalityKeyValue("locale", "en-US")
+									.highCardinalityKeyValue("userId", "42")
+									.observe(() -> {
+				// Execute business logic here
+									});
+							}
+						}
+					```
+
+					--
+
+					## Meer observability
+					
+					Auto-configuration voor [Micrometer Tracing](https://docs.spring.io/spring-boot/docs/3.0.0/reference/html/actuator.html#actuator.micrometer-tracing)
+					Support
+					* Brave, OpenTelemetry, Zipkin, Wavefront
+					* (Auto-config) support OtlpMeterRegsitry, 
+					* (Auto-config) support Prometheus Examplars (maakt trace ID beschikbaar voor Prometheus)
+
+					--
+
+					## Spring MVC
+
+					Problem Details Standard [RFC7807](https://github.com/spring-projects/spring-framework/issues/27052) 
+					
+					zonder extra dependencies
+
+					--
+
+					```java
+					Problem.builder()
+						.withType(URI.create("https://example.org/out-of-stock"))
+						.withTitle("Out of Stock")
+						.withStatus(BAD_REQUEST)
+						.withDetail("Item B00027Y5QG is no longer available")
+						.with("product", "B00027Y5QG")
+						.build();
+					```
+					```json
+					{
+						"type": "https://example.org/out-of-stock",
+						"title": "Out of Stock",
+						"status": 400,
+						"detail": "Item B00027Y5QG is no longer available",
+						"product": "B00027Y5QG"
+					}
+					```
+					
+
+					--
+
+					## Spring MVC
+
+					`HttpMethod` is nu een class
+					```java
+					HttpMethod lock = HttpMethod.valueOf("LOCK");
+					```
+
+					--
+
+					## Trailing slash
+
+					`GET /api/v1/todos/name/`
+					
+					matcht standaard niet meer op
+
+					```java
+					@RequestMapping("/api/v1/todos/name")
+					```
+
+					--
+
+					## Andere zaken
+
+					* Apache HttpClient5 ipv HttpClient
+					* Veel veranderingen in Actuator
+					* Veranderingen in Spring Batch
+					* Veel algemene verbeteringen en naamswijzigingen van properties
+
+					--
+
+					## Migrating
+
+					* Migreer eerst naar Spring Boot 2.7
+					* Gebruik je Spring Security, upgrade eerst naar [versie 5.8](https://docs.spring.io/spring-security/reference/5.8/migration/index.html)
+					* Check voor gebruik deprecated code
+					* Heb je nog [legacy config file processing](https://spring.io/blog/2020/08/14/config-file-processing-in-spring-boot-2-4) nodig?
+					* Migreer naar Java 17
+					* Check alle 3rd-party dependencies, moet Jakarta EE9+ zijn
+					* Check ook Spring Cloud dependencies
+					* Lees de [migration guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
+
+					--
+
+					## Jakarta EE
+					```java
+					import javax.servlet.http.HttpServletRequest;
+					```
+					wordt
+					```java
+					import jakarta.servlet.http.HttpServletRequest;
+					```	
+
+					--
+
+					## Migration - Properties
+
+					bijvoorbeeld
+					
+					`server.max.http.header.size` 
+					
+					naar 
+					
+					`server.max-http-request-header-size`
+					```xml
+					<dependency>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-properties-migrator</artifactId>
+						<scope>runtime</scope>
+					</dependency>
+					```
+
+					--
+
+					## Meer lezen
+					
+					* [Release notes Spring Boot 3](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes)
+					* [Release notes Spring 6.0](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-6.x)
+					* [Migration guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
+					* [Spring Security 6.0 migration](https://docs.spring.io/spring-security/reference/6.0/migration/index.html)
 
 					---
 
@@ -610,8 +775,6 @@
 					---
 
 					## Thank you!
-					joost.van.gils@nl.abnamro.com
-					robbin.troost@aegon.nl
 
 					</textarea>
 				</section>
