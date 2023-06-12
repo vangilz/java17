@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Intregation Testing @ ABN AMRO</title>
+
+		<link rel="stylesheet" href="../../reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="../../reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="../../reveal.js/dist/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="../../reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <!-- Slides are separated by newline + three dashes + newline, vertical slides identical but two dashes -->
+                <section data-markdown data-separator="^\n---\n$" data-separator-vertical="^\n--\n$">
+					<textarea data-template>
+					## Integration testing
+					<img src="images/testcontainers-logo.svg" width="80%"/>
+					<img src="images/wireMockLogo.png" width="60%"/>
+
+					--
+					
+					## Who are we
+
+					Joost van Gils & Nishanth Athikayala
+					
+					Java Developers
+					
+					Payments Gladiators
+					
+					---
+					
+					## What is integration testing?
+					
+					--
+
+					## Types of testing
+					* Unit testing
+					* Integration testing
+					* End-to-end testing
+						
+					Note:
+					* Unit: test a single piece of code in isolation
+					* End-to-end: test the complete application from the start
+
+					--
+
+					## Integration Testing
+
+					...the process of testing the interface between two software units. Its focus is on determining the correctness of the interface. Integration testing aims to expose faults in the interaction between integrated units. 
+					
+					Note:
+					Software units: Think database or other API
+
+					--
+
+					## Some characteristics
+
+					* All modules of the software are tested combined
+					* No need to know internal design of the software
+					* Sits in between unit testing and end-to-end testing
+					* Costlier than unit testing (creating/performing)
+					* Ensures the proper working of code with the external dependencies
+					* Typically: no mocks or stubs
+
+					Note:
+					* black-box
+					* Many "levels" of production resemblance: in-memory vs real production database
+
+					--
+
+					## Why integration testing?
+
+					* To test the interaction/connectivity to external services
+					* Where a unit test is not possible/make no sense
+					* Test load/performance and functional behavior
+					* More convincing at demonstrating correctness
+
+					Note:
+					* Implementation can change, the behavior should not (black box). Useful in rebuild.
+					
+					---
+
+					## Test Containers
+					todo
+					https://testcontainers.com/
+
+					---
+
+					## Wiremock
+					todo
+
+					---
+
+					# Demo!
+
+					---
+
+					## Thank you!
+					joost.van.gils@nl.abnamro.com
+					nishanth.athikayala@nl.abnamro.com
+
+
+					</textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="../../reveal.js/dist/reveal.js"></script>
+		<script src="../../reveal.js/plugin/notes/notes.js"></script>
+		<script src="../../reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="../../reveal.js/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				navigationMode: 'linear',
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
