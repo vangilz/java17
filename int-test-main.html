@@ -19,8 +19,11 @@
                 <!-- Slides are separated by newline + three dashes + newline, vertical slides identical but two dashes -->
                 <section data-markdown data-separator="^\n---\n$" data-separator-vertical="^\n--\n$">
 					<textarea data-template>
-					## Integration testing
+					## Integration testing with
 					<img src="images/testcontainers-logo.svg" width="80%"/>
+					
+					&
+					
 					<img src="images/wireMockLogo.png" width="60%"/>
 
 					--
@@ -259,7 +262,40 @@
 					---
 
 					## Wiremock
-					todo
+					https://wiremock.org/
+
+					--
+
+					## What is WireMock?
+					
+					WireMock is a tool that can mimic the behavior of an HTTP API. 
+					
+					--
+
+					## Some characteristics
+
+					* Configure the response for the HTTP API when it receives a specific request.
+					* Configure request matchers by comparing the request URL, request method, request headers, cookies, and request body with the expected values.
+					* Runs in unit tests, as a standalone process or as a WAR app
+
+					--
+
+					## When Should We Use WireMock?
+					
+					* we have to implement a feature which uses an HTTP API that is not ready.
+					* WireMock allows us to write fast and consistent tests. 
+
+					--
+
+					## Continue
+					
+					When we write integration tests, we don't want to invoke external HTTP APIs because if our tests invoke an external HTTP API
+					* Our tests depend from the external HTTP API that might be down
+					* Our tests are slower than they could be
+					* We cannot run our tests if we don't have a network connection
+					
+					Note: 
+					Naturally, this means that our tests will fail if the external HTTP API is down. Also, it's very common that the external HTTP API doesn't allow us to initialize it into a known state before our tests are run. 
 
 					---
 
