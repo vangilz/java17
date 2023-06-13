@@ -87,8 +87,174 @@
 					---
 
 					## Test Containers
-					todo
 					https://testcontainers.com/
+
+					--
+
+					*Testcontainers is an open source framework for providing throwaway, lightweight instances of databases, message brokers, web browsers, or just about anything that can run in a Docker container.*
+
+					--
+
+					*It is a library that provides easy and lightweight APIs for bootstrapping local development and test dependencies with real services wrapped in Docker containers. You can write tests that depend on the same services you use in production without mocks or in-memory services.*
+
+					--
+
+					## Architecture
+
+					![architecture](images/cn-arch-tc.png)
+
+					--
+
+					## Test flow
+
+					![flow](images/test-workflow.png)
+
+					--
+					
+					## Preconfigured [modules](https://testcontainers.com/modules/)		
+					```java
+					var mssqlserver = new MSSQLServerContainer()
+						.acceptLicense();
+					mssqlserver.start();
+
+
+					```
+
+					```java
+					var wiremockServer = new WireMockContainer("2.35.0")
+						.withMapping("hello", 
+									 WireMockContainerJunit5Test.class, 
+									 "hello-world.json");
+					wiremockServer.start();                
+
+
+					```
+
+					Note:
+					* You can use any Docker container using GenericContainer
+					
+					--
+
+					## Generic Container API
+
+					```java
+					var container = new GenericContainer("postgres:15")
+						.withExposedPorts(5432)
+						.waitingFor(new LogMessageWaitStrategy()
+							.withRegEx(".*ready to accept connections.*\\s")
+							.withTimes(2)
+							.withStartupTimeout(Duration.of(60, SECONDS)));
+					container.start();
+					var username = "test";
+					var password = "test";
+					var jdbcUrl = "jdbc:postgresql://" + container.getHost() + 
+						":" + container.getMappedPort(5432) + "/test";
+					//perform db operations
+					container.stop();
+					```
+
+					--
+
+					# maven setup
+
+					```xml
+					<dependency>
+						<groupId>org.testcontainers</groupId>
+						<artifactId>testcontainers</artifactId>
+					</dependency>
+					<dependency>
+						<groupId>org.testcontainers</groupId>
+						<artifactId>junit-jupiter</artifactId>
+					</dependency>
+					<dependency>
+						<groupId>org.testcontainers</groupId>
+						<artifactId>mssqlserver</artifactId>
+					</dependency>
+					```
+
+					--
+					
+					## Local testing: SQL Server
+
+					```yml
+					spring:
+						datasource:
+							url: jdbc:tc:sqlserver:2022-latest:///test-db
+					```
+
+					--
+
+					## Optional: Flyway
+
+					Prepare the database for running tests
+
+					```yml
+					spring:
+						flyway:
+							locations: classpath:db/migration
+
+					--
+					
+					## Run your app locally
+
+					```yml
+					spring:
+					  datasource:
+						url: jdbc:sqlserver://localhost:1433;
+									databaseName=localdb;encrypt=false
+						username: sa
+						password: secret
+						driver-class-name: com.microsoft.sqlserver.jdbc
+									.SQLServerDriver
+					```	
+
+					--
+
+					## Azure DevOps CI
+
+					```yml
+					spring:
+						datasource:
+						url: jdbc:sqlserver://sqlserver-host:1433;encrypt=false
+						username: sa
+						password: secret
+						driver-class-name: com.microsoft.sqlserver.jdbc
+									.SQLServerDriver
+
+					```
+
+					Note: 
+					you cannot run testcontainers on Azure at ABN
+
+					--
+
+					## Docker Compose
+					```yml
+					version: '3.9'
+					services:
+						sqlserver:
+							image: p-nexus-3.development.nl.eu.abnamro.com:18445
+								/microsoft/mssql-server-linux:2017-latest
+							hostname: sqlserver-host
+							environment:
+							- ACCEPT_EULA=Y
+							- SA_PASSWORD=secret
+							ports:
+							- "1433:1433"
+					```
+
+					--
+
+					## Pipeline
+
+					```yml
+					- template: flows/java-maven.yml@templates
+						parameters:
+							docker_compose_file: sqlserver-docker-compose.yml
+							run_unittests_with_containers: true
+							optional_maven_parameters: -Pci-integration
+							...
+					  ```
 
 					---
 
@@ -105,6 +271,12 @@
 					joost.van.gils@nl.abnamro.com
 					nishanth.athikayala@nl.abnamro.com
 
+					--
+
+					## Links
+					* https://testcontainers.com/
+					* https://wiremock.org/
+					* https://dev.azure.com/cbsp-abnamro/GRD0001005/_git/eman-emandates-issuer
 
 					</textarea>
 				</section>
